@@ -801,7 +801,7 @@ a { color: inherit; text-decoration: none; }
 
     try {
       // Render 异步 API
-      const API_BASE = 'https://omni-api.onrender.com';
+      const API_BASE = 'https://omni-generate-qucvvhojbv.cn-shenzhen.fcapp.run';
       
       const res = await fetch(API_BASE + '/api/generate', { method: 'POST', body: form });
       if (!res.ok) { const err = await res.json(); throw new Error(err.detail || '提交失败'); }
