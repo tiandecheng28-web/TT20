@@ -77,7 +77,7 @@ async def generate(
     selling_points: str = Form(""),
     prompt_extra: str = Form(""),
     style: str = Form("white_background"),
-    count: int = Form(6),
+    count: int = Form(2),
 ):
     if not ARK_API_KEY:
         raise HTTPException(status_code=500, detail="ARK_API_KEY not configured")
@@ -125,7 +125,7 @@ async def generate(
     images: list[GeneratedImage] = []
 
     # Generate 6 images (API supports up to 4 per call, so 2 calls)
-    batch_size = 4
+    batch_size = 2
     for batch_start in range(0, count, batch_size):
         batch_count = min(batch_size, count - batch_start)
 
@@ -140,11 +140,11 @@ async def generate(
         }
 
         try:
-            result = await _call_doubao(api_headers, payload)
-        except HTTPException:
-            raise
+            result = await _call_doubao(api_headers, payload, timeout=30.0)
+        except HTTPException as he:
+            raise HTTPException(status_code=502, detail=f"Doubao HTTP error: {he.detail}")
         except Exception as e:
-            raise HTTPException(status_code=502, detail=f"Image generation failed: {str(e)}")
+            raise HTTPException(status_code=502, detail=f"Generation error: {type(e).__name__}: {str(e)}")
 
         # Parse results
         data_items = result.get("data", [result] if result.get("url") else [])
