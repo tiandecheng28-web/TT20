@@ -1048,6 +1048,7 @@ a { color: inherit; text-decoration: none; }
   banners.forEach(banner => {
     banner.addEventListener('click', (e) => {
       if (e.target.closest('.banner-nav')) return;
+      if (banner.dataset.type === 'main') { window.location.href = '/editor'; return; }
       const type = banner.dataset.type;
       tabs.forEach(t => t.classList.toggle('active', t.dataset.type === type));
       activeType = type;
