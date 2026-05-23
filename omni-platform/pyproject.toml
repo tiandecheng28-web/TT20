@@ -1,0 +1,6 @@
+[project]
+name = "omni-platform"
+version = "0.1.0"
+
+[tool.vercel]
+entrypoint = "api.generate:app"
