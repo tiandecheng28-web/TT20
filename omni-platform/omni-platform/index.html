@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家居视觉资产库</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0c0a;
+  --surface: #181513;
+  --surface-alt: #1f1b18;
+  --surface-hover: #25201c;
+  --border: #2b2622;
+  --border-hover: #3d3631;
+  --text: #f0e8db;
+  --text-secondary: #a89e8d;
+  --text-tertiary: #6b6258;
+  --accent: #c2a07a;
+  --accent-hover: #d4b389;
+  --accent-soft: rgba(194, 160, 122, 0.12);
+  --bg-rgb: 14, 12, 10;
+  --accent-rgb: 194, 160, 122;
+  --font-display: 'Cormorant Garamond', 'PingFang SC', Georgia, serif;
+  --font-sans: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+}
+
+* , *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
+  min-height: 100vh;
+}
+img { display: block; max-width: 100%; height: auto; }
+button { font: inherit; color: inherit; cursor: pointer; background: none; border: none; }
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--accent); color: var(--bg); }
+
+.container { max-width: 1440px; margin: 0 auto; padding: 0 32px; }
+
+/* ---------- NAV (top thin bar) ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(14, 12, 10, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand {
+  display: inline-flex; align-items: baseline; gap: 10px;
+}
+.nav-brand-name {
+  font-family: var(--font-display);
+  font-size: 24px; font-weight: 500; font-style: italic;
+  color: var(--text);
+}
+.nav-brand-tag {
+  font: 600 10px/1 var(--font-sans);
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  padding: 4px 8px;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+.nav-right {
+  display: flex; align-items: center; gap: 24px;
+}
+.nav-link {
+  font: 500 13px var(--font-sans);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  transition: color 0.2s;
+}
+.nav-link:hover { color: var(--text); }
+.nav-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  display: flex; align-items: center; justify-content: center;
+  font: 600 12px var(--font-sans); color: var(--bg);
+}
+
+/* ---------- HERO BANNERS ---------- */
+.hero {
+  padding: 24px 0 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.banner {
+  position: relative;
+  aspect-ratio: 16 / 7;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+.banner:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+.banner:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.banner-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.banner:hover .banner-img { transform: scale(1.03); }
+.banner-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(110deg, rgba(14,12,10,0.75) 0%, rgba(14,12,10,0.15) 55%, transparent 100%);
+  z-index: 1;
+}
+.banner-content {
+  position: absolute;
+  left: 36px; bottom: 32px; top: 32px;
+  z-index: 2;
+  max-width: 60%;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.banner-eyebrow {
+  font: 600 11px/1 var(--font-sans);
+  color: var(--accent);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px;
+}
+.banner-eyebrow::before { content: ''; width: 18px; height: 1px; background: var(--accent); }
+.banner-title {
+  font-family: var(--font-display);
+  font-size: 42px; font-weight: 400;
+  line-height: 1.05;
+  color: var(--text);
+  letter-spacing: -0.015em;
+  margin-bottom: 8px;
+}
+.banner-title em { font-style: italic; font-weight: 400; color: var(--accent); }
+.banner-sub {
+  font: 400 13px/1.5 var(--font-sans);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+.banner-badge {
+  position: absolute;
+  top: 18px; right: 18px;
+  z-index: 2;
+  font: 600 10px/1 var(--font-sans);
+  color: var(--bg);
+  background: var(--accent);
+  padding: 6px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.banner-nav {
+  position: absolute;
+  left: 16px; top: 50%; transform: translateY(-50%);
+  z-index: 3;
+  width: 36px; height: 36px;
+  background: rgba(14, 12, 10, 0.5);
+  border: 1px solid rgba(240, 232, 219, 0.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text);
+  transition: all 0.2s;
+}
+.banner-nav:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+/* ---------- QUICK ACTIONS ROW ---------- */
+.quick-row {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.quick-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  min-height: 76px;
+}
+.quick-card:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+}
+.quick-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.quick-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--surface-alt);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+.quick-card.featured .quick-icon {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.quick-content { flex: 1; min-width: 0; }
+.quick-title {
+  font: 600 14px/1.3 var(--font-sans);
+  color: var(--text);
+  margin-bottom: 2px;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.quick-sub {
+  font: 400 11px/1.3 var(--font-sans);
+  color: var(--text-tertiary);
+  letter-spacing: 0.02em;
+}
+.quick-action {
+  background: var(--accent);
+  color: var(--bg);
+  font: 600 12px/1 var(--font-sans);
+  padding: 7px 14px;
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.quick-action:hover { background: var(--accent-hover); }
+.quick-arrow {
+  color: var(--text-tertiary);
+  transition: color 0.2s, transform 0.2s;
+}
+.quick-card:hover .quick-arrow {
+  color: var(--accent);
+  transform: translate(2px, 0);
+}
+.quick-badge {
+  font: 600 9px/1 var(--font-sans);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 2px 6px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ---------- TABS + SEARCH ROW ---------- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+.tab {
+  position: relative;
+  padding: 6px 4px;
+  font: 600 15px/1 var(--font-sans);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  transition: color 0.2s;
+  margin-right: 18px;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--text); }
+.tab.active::after {
+  content: '';
+  position: absolute;
+  left: 4px; right: 4px; bottom: -17px;
+  height: 2px;
+  background: var(--accent);
+}
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0 16px;
+  height: 36px;
+  flex: 1;
+  max-width: 360px;
+  transition: border-color 0.2s ease;
+}
+.search:focus-within { border-color: var(--accent); }
+.search svg { color: var(--text-tertiary); flex-shrink: 0; }
+.search input {
+  background: none; border: none; outline: none;
+  font: 400 13px var(--font-sans);
+  color: var(--text);
+  flex: 1; min-width: 0;
+}
+.search input::placeholder { color: var(--text-tertiary); }
+
+.toolbar-spacer { flex: 1; }
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  font: 600 13px/1 var(--font-sans);
+  padding: 10px 20px;
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-primary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- CATEGORY CHIPS ---------- */
+.chips {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  font: 500 13px/1 var(--font-sans);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  padding: 6px 2px;
+  position: relative;
+  transition: color 0.2s;
+}
+.chip:hover { color: var(--text); }
+.chip.active { color: var(--text); font-weight: 600; }
+.chip.active::after {
+  content: '';
+  position: absolute;
+  left: 2px; right: 2px; bottom: -2px;
+  height: 1.5px;
+  background: var(--accent);
+}
+.chip .fire { color: var(--accent); margin-left: 2px; }
+
+/* ---------- MASONRY GRID ---------- */
+.grid {
+  column-count: 5;
+  column-gap: 14px;
+  padding-bottom: 80px;
+}
+@media (max-width: 1279px) { .grid { column-count: 4; } }
+@media (max-width: 1023px) { .grid { column-count: 3; } }
+@media (max-width: 767px)  { .grid { column-count: 2; } }
+
+.card {
+  position: relative;
+  background: var(--surface);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 14px;
+  break-inside: avoid;
+  transition: transform 0.25s ease;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+.card:hover { transform: translateY(-3px); }
+.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.card-media {
+  width: 100%;
+  overflow: hidden;
+  background: var(--surface-alt);
+  position: relative;
+}
+.card-media img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card:hover .card-media img { transform: scale(1.04); }
+
+.card-tag {
+  position: absolute;
+  top: 10px; left: 10px;
+  font: 600 10px/1 var(--font-sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: rgba(14, 12, 10, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 5px 9px;
+  border-radius: 3px;
+  z-index: 2;
+}
+.card-tag.tag-aplus {
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  background: rgba(14, 12, 10, 0.5);
+}
+
+.card-foot {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+.card-avatar {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font: 600 10px var(--font-sans); color: var(--bg);
+}
+.card-title {
+  font: 500 12px/1.3 var(--font-sans);
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-like {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: 500 11px var(--font-mono);
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+/* ---------- EMPTY ---------- */
+.empty {
+  text-align: center;
+  padding: 80px 0;
+  color: var(--text-tertiary);
+  display: none;
+}
+.empty.show { display: block; }
+.empty-text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--text-secondary);
+}
+
+/* ---------- LIGHTBOX ---------- */
+.lightbox {
+  position: fixed; inset: 0;
+  background: rgba(14, 12, 10, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  align-items: center; justify-content: center;
+  z-index: 1000;
+  padding: 40px;
+  cursor: zoom-out;
+}
+.lightbox.open { display: flex; animation: fadeIn 0.25s ease; }
+.lightbox-img {
+  max-width: 92vw; max-height: 88vh;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  animation: lightboxIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: default;
+}
+.lightbox-close {
+  position: absolute;
+  top: 24px; right: 24px;
+  width: 44px; height: 44px;
+  border: 1px solid var(--border-hover);
+  background: rgba(14, 12, 10, 0.7);
+  border-radius: 50%;
+  color: var(--text);
+  font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease;
+}
+.lightbox-close:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.lightbox-caption {
+  position: absolute;
+  bottom: 28px;
+  left: 50%; transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--text-secondary);
+  padding: 8px 20px;
+  background: rgba(14, 12, 10, 0.6);
+  border-radius: 100px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ---------- ANIMATIONS ---------- */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes lightboxIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+.card:nth-child(1)  { animation-delay: 0.02s; }
+.card:nth-child(2)  { animation-delay: 0.04s; }
+.card:nth-child(3)  { animation-delay: 0.06s; }
+.card:nth-child(4)  { animation-delay: 0.08s; }
+.card:nth-child(5)  { animation-delay: 0.10s; }
+.card:nth-child(6)  { animation-delay: 0.12s; }
+.card:nth-child(7)  { animation-delay: 0.14s; }
+.card:nth-child(8)  { animation-delay: 0.16s; }
+.card:nth-child(n+9) { animation-delay: 0.18s; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1279px) {
+  .quick-row { grid-template-columns: 1.5fr repeat(3, 1fr); }
+  .quick-card:nth-child(n+5) { display: none; }
+}
+@media (max-width: 1023px) {
+  .container { padding: 0 24px; }
+  .nav { padding: 12px 24px; }
+  .hero { grid-template-columns: 1fr; }
+  .banner { aspect-ratio: 16 / 7; }
+  .banner-title { font-size: 32px; }
+  .quick-row { grid-template-columns: 1fr 1fr; }
+  .quick-card:nth-child(n+3) { display: none; }
+}
+@media (max-width: 767px) {
+  .nav { padding: 12px 16px; }
+  .container { padding: 0 16px; }
+  .nav-right .nav-link:not(.nav-link-key) { display: none; }
+  .nav-brand-name { font-size: 20px; }
+  .banner-title { font-size: 24px; }
+  .banner-content { left: 24px; bottom: 24px; top: 24px; max-width: 85%; }
+  .quick-row { grid-template-columns: 1fr; }
+  .toolbar { flex-wrap: wrap; gap: 12px; }
+  .search { max-width: none; width: 100%; order: 3; }
+  .lightbox { padding: 16px; }
+  .lightbox-close { width: 40px; height: 40px; top: 16px; right: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .card:hover, .banner:hover, .quick-card:hover { transform: none; }
+  .card:hover .card-media img, .banner:hover .banner-img { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<header class="nav">
+  <a href="#" class="nav-brand">
+    <span class="nav-brand-name">家居视觉</span>
+    <span class="nav-brand-tag">Gallery</span>
+  </a>
+  <div class="nav-right">
+    <a href="#" class="nav-link">视觉资产</a>
+    <a href="#" class="nav-link">活动</a>
+    <a href="#" class="nav-link">设计师</a>
+    <a href="#" class="nav-link nav-link-key">帮助</a>
+    <div class="nav-avatar" title="运营账号">YO</div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ===== HERO BANNERS ===== -->
+  <section class="hero" aria-label="精选作品">
+    <article class="banner" data-type="main" tabindex="0">
+      <button class="banner-nav" aria-label="上一个" tabindex="-1" onclick="event.stopPropagation()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="banner-badge">主图 · MAIN</span>
+      <img class="banner-img" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1400&q=80" alt="精选主图">
+      <div class="banner-overlay"></div>
+      <div class="banner-content">
+        <div class="banner-eyebrow">FEATURED · 本周精选</div>
+        <div>
+          <h2 class="banner-title">让光影<em>讲故事</em></h2>
+          <p class="banner-sub">点击查看本月所有主图作品</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="banner" data-type="aplus" tabindex="0">
+      <span class="banner-badge">A+ · DETAIL</span>
+      <img class="banner-img" src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1400&q=80" alt="精选 A+">
+      <div class="banner-overlay"></div>
+      <div class="banner-content">
+        <div class="banner-eyebrow">FEATURED · 本周精选</div>
+        <div>
+          <h2 class="banner-title">细节<em>即品牌</em></h2>
+          <p class="banner-sub">点击浏览全部 A+ 详情页</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ===== QUICK ACTIONS ROW (六个卡片，对应可灵的工具入口行) ===== -->
+  <section class="quick-row" aria-label="快捷入口">
+    <button class="quick-card featured">
+      <div class="quick-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="quick-content">
+        <div class="quick-title">本月新品库</div>
+        <div class="quick-sub">42 件待上架产品</div>
+      </div>
+      <span class="quick-action">立即查看</span>
+    </button>
+
+    <button class="quick-card">
+      <div class="quick-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+      </div>
+      <div class="quick-content">
+        <div class="quick-title">主图模板</div>
+        <div class="quick-sub">128 套</div>
+      </div>
+      <svg class="quick-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+
+    <button class="quick-card">
+      <div class="quick-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="quick-content">
+        <div class="quick-title">A+ 模板</div>
+        <div class="quick-sub">64 套</div>
+      </div>
+      <svg class="quick-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+
+    <button class="quick-card">
+      <div class="quick-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div class="quick-content">
+        <div class="quick-title">设计师对接</div>
+        <div class="quick-sub">8 位在线</div>
+      </div>
+      <svg class="quick-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+
+    <button class="quick-card">
+      <div class="quick-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="quick-content">
+        <div class="quick-title">上架排期<span class="quick-badge">Beta</span></div>
+        <div class="quick-sub">本周 12 单</div>
+      </div>
+      <svg class="quick-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+
+    <button class="quick-card">
+      <div class="quick-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <div class="quick-content">
+        <div class="quick-title">规范文档</div>
+        <div class="quick-sub">VI / 平台规则</div>
+      </div>
+      <svg class="quick-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </section>
+
+  <!-- ===== TABS + SEARCH ===== -->
+  <section class="toolbar" aria-label="筛选与搜索">
+    <div class="tabs">
+      <button class="tab active" data-type="all">全部作品</button>
+      <button class="tab" data-type="main">仅看主图</button>
+      <button class="tab" data-type="aplus">仅看 A+</button>
+    </div>
+    <div class="search" role="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+      </svg>
+      <input type="search" id="searchInput" placeholder="搜索产品名 / SKU / 设计师..." aria-label="搜索">
+    </div>
+    <div class="toolbar-spacer"></div>
+    <button class="btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      上传作品
+    </button>
+  </section>
+
+  <!-- ===== CATEGORY CHIPS (像可灵那个横条) ===== -->
+  <nav class="chips" aria-label="类目筛选">
+    <button class="chip active" data-cat="all">全部</button>
+    <button class="chip" data-cat="living">客厅 <span class="fire">🔥</span></button>
+    <button class="chip" data-cat="bedroom">卧室</button>
+    <button class="chip" data-cat="dining">餐厨</button>
+    <button class="chip" data-cat="lighting">灯具</button>
+    <button class="chip" data-cat="textile">软装</button>
+    <button class="chip" data-cat="decor">摆件装饰</button>
+    <button class="chip" data-cat="storage">收纳</button>
+    <button class="chip" data-cat="plant">花艺绿植</button>
+    <button class="chip" data-cat="outdoor">户外</button>
+    <button class="chip" data-cat="bathroom">卫浴</button>
+  </nav>
+
+  <!-- ===== MASONRY GRID ===== -->
+  <section class="grid" id="grid">
+
+    <article class="card" data-cat="living" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">L</div><span class="card-title">极简布艺三人沙发</span></div>
+        <span class="card-like">♡ 248</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="lighting" data-type="aplus" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag tag-aplus">A+</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">M</div><span class="card-title">日式落地灯 · 暖光</span></div>
+        <span class="card-like">♡ 412</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="bedroom" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">J</div><span class="card-title">原木实木床架</span></div>
+        <span class="card-like">♡ 176</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="decor" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1602872030490-4a484a7b3ba6?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">A</div><span class="card-title">香薰蜡烛 · 雪松木调</span></div>
+        <span class="card-like">♡ 89</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="textile" data-type="aplus" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag tag-aplus">A+</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">N</div><span class="card-title">羊毛混纺抱枕套</span></div>
+        <span class="card-like">♡ 305</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="plant" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">K</div><span class="card-title">陶瓷花瓶 · 哑光奶白</span></div>
+        <span class="card-like">♡ 122</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="living" data-type="aplus" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag tag-aplus">A+</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">L</div><span class="card-title">北欧风客厅整套方案</span></div>
+        <span class="card-like">♡ 521</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="lighting" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1524634126442-357e0eac3c14?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">M</div><span class="card-title">铜艺吊灯 · 三头</span></div>
+        <span class="card-like">♡ 67</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="bedroom" data-type="aplus" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag tag-aplus">A+</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">J</div><span class="card-title">长绒棉四件套 · 米白</span></div>
+        <span class="card-like">♡ 287</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="dining" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">P</div><span class="card-title">手工陶瓷餐具六件套</span></div>
+        <span class="card-like">♡ 198</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="storage" data-type="aplus" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag tag-aplus">A+</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1558997519-83ea9252edf8?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">S</div><span class="card-title">藤编收纳篮 · 大号</span></div>
+        <span class="card-like">♡ 94</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="decor" data-type="aplus" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag tag-aplus">A+</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">F</div><span class="card-title">极简金属相框 · 五件套</span></div>
+        <span class="card-like">♡ 156</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="living" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">C</div><span class="card-title">真皮单人椅 · 焦糖色</span></div>
+        <span class="card-like">♡ 332</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="textile" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1600166898405-da9535204843?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">R</div><span class="card-title">手工编织地毯 · 复古纹</span></div>
+        <span class="card-like">♡ 271</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="dining" data-type="aplus" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag tag-aplus">A+</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1572119003128-d110c07af847?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">T</div><span class="card-title">实木餐桌 · 1.6m</span></div>
+        <span class="card-like">♡ 449</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="lighting" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">M</div><span class="card-title">复古台灯 · 黄铜底座</span></div>
+        <span class="card-like">♡ 184</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="storage" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1594620302200-9a762244a156?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">S</div><span class="card-title">实木开放式书架</span></div>
+        <span class="card-like">♡ 93</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="decor" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">D</div><span class="card-title">陶艺摆件 · 月白釉</span></div>
+        <span class="card-like">♡ 218</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="textile" data-type="aplus" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag tag-aplus">A+</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1581539250439-c96689b516dd?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">C</div><span class="card-title">亚麻窗帘 · 米咖</span></div>
+        <span class="card-like">♡ 137</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="dining" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">P</div><span class="card-title">铸铁锅五件套 · 复古绿</span></div>
+        <span class="card-like">♡ 261</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="bedroom" data-type="main" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag">主图</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">J</div><span class="card-title">实木床头柜 · 双抽屉</span></div>
+        <span class="card-like">♡ 76</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="living" data-type="aplus" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag tag-aplus">A+</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">L</div><span class="card-title">现代极简茶几 · 大理石</span></div>
+        <span class="card-like">♡ 314</span>
+      </div>
+    </article>
+
+    <article class="card" data-cat="plant" data-type="aplus" tabindex="0">
+      <div class="card-media">
+        <span class="card-tag tag-aplus">A+</span>
+        <img loading="lazy" src="https://images.unsplash.com/photo-1459411552884-841db17b3381?auto=format&fit=crop&w=600&q=80" alt="">
+      </div>
+      <div class="card-foot">
+        <div class="card-meta"><div class="card-avatar">K</div><span class="card-title">仿真绿植套装 · 北欧</span></div>
+        <span class="card-like">♡ 142</span>
+      </div>
+    </article>
+
+  </section>
+
+  <div class="empty" id="emptyState">
+    <div class="empty-text">— nothing here yet —</div>
+  </div>
+
+</main>
+
+<!-- ===== LIGHTBOX ===== -->
+<div class="lightbox" id="lightbox" role="dialog" aria-label="图片预览" aria-modal="true">
+  <button class="lightbox-close" id="lightboxClose" aria-label="关闭预览">×</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<script>
+  const tabs    = document.querySelectorAll('.tab');
+  const chips   = document.querySelectorAll('.chip');
+  const cards   = document.querySelectorAll('.card');
+  const banners = document.querySelectorAll('.banner');
+  const empty   = document.getElementById('emptyState');
+  const searchInput = document.getElementById('searchInput');
+
+  let activeType  = 'all';
+  let activeCat   = 'all';
+  let activeQuery = '';
+
+  function applyFilter() {
+    let visible = 0;
+    cards.forEach(card => {
+      const matchType = activeType === 'all' || card.dataset.type === activeType;
+      const matchCat  = activeCat === 'all'  || card.dataset.cat === activeCat;
+      const title = card.querySelector('.card-title').textContent.toLowerCase();
+      const matchQuery = !activeQuery || title.includes(activeQuery);
+      const show = matchType && matchCat && matchQuery;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    empty.classList.toggle('show', visible === 0);
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeType = tab.dataset.type;
+      applyFilter();
+    });
+  });
+
+  banners.forEach(banner => {
+    banner.addEventListener('click', (e) => {
+      if (e.target.closest('.banner-nav')) return;
+      const type = banner.dataset.type;
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.type === type));
+      activeType = type;
+      applyFilter();
+      const toolbar = document.querySelector('.toolbar');
+      window.scrollTo({ top: toolbar.offsetTop - 80, behavior: 'smooth' });
+    });
+    banner.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); banner.click(); }
+    });
+  });
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeCat = chip.dataset.cat;
+      applyFilter();
+    });
+  });
+
+  searchInput.addEventListener('input', (e) => {
+    activeQuery = e.target.value.trim().toLowerCase();
+    applyFilter();
+  });
+
+  /* Lightbox */
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCaption = document.getElementById('lightboxCaption');
+  const lightboxClose = document.getElementById('lightboxClose');
+
+  function openLightbox(src, title) {
+    lightboxImg.src = src.replace('w=600', 'w=1600');
+    lightboxImg.alt = title;
+    lightboxCaption.textContent = title;
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  cards.forEach(card => {
+    const img = card.querySelector('img');
+    const title = card.querySelector('.card-title').textContent;
+    card.addEventListener('click', () => openLightbox(img.src, title));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(img.src, title); }
+    });
+  });
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  lightboxClose.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+</script>
+
+</body>
+</html>
