@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>主图编辑 · 家居视觉资产库</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0c0a;
+  --surface: #181513;
+  --surface-alt: #1f1b18;
+  --surface-hover: #25201c;
+  --border: #2b2622;
+  --border-hover: #3d3631;
+  --border-strong: #4a423b;
+  --text: #f0e8db;
+  --text-secondary: #a89e8d;
+  --text-tertiary: #6b6258;
+  --accent: #c2a07a;
+  --accent-hover: #d4b389;
+  --accent-soft: rgba(194, 160, 122, 0.12);
+  --font-display: 'Cormorant Garamond', 'PingFang SC', Georgia, serif;
+  --font-sans: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
+  min-height: 100vh;
+}
+img { display: block; max-width: 100%; height: auto; }
+button { font: inherit; color: inherit; cursor: pointer; background: none; border: none; }
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--accent); color: var(--bg); }
+
+.container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+/* ---------- NAV ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(14, 12, 10, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-left { display: flex; align-items: center; gap: 20px; }
+.nav-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--text-secondary);
+  font: 500 13px var(--font-sans);
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  margin-left: -12px;
+}
+.nav-back:hover { color: var(--text); background: var(--surface); }
+.nav-divider { width: 1px; height: 18px; background: var(--border); }
+.nav-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.nav-title em { color: var(--accent); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-icon-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.nav-icon-btn:hover { color: var(--text); background: var(--surface); }
+.nav-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  display: flex; align-items: center; justify-content: center;
+  font: 600 12px var(--font-sans); color: var(--bg);
+}
+
+/* ---------- PAGE HEAD ---------- */
+.page-head {
+  padding: 32px 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.page-head h1 {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.page-head h1 em { font-style: italic; color: var(--accent); }
+.page-eyebrow {
+  font: 600 11px/1 var(--font-sans);
+  color: var(--accent);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.page-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--accent); }
+.page-meta {
+  display: flex;
+  gap: 20px;
+  font: 500 12px/1.5 var(--font-sans);
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+.page-meta .num { font-family: var(--font-mono); color: var(--text); font-size: 13px; }
+
+/* ---------- WORKBENCH (top: reference + form) ---------- */
+.workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+/* Left: large reference image */
+.ref-main {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.ref-main img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.ref-main-label {
+  position: absolute;
+  top: 14px; left: 14px;
+  font: 600 10px/1 var(--font-sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: rgba(14, 12, 10, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 6px 10px;
+  border-radius: 4px;
+  z-index: 2;
+}
+.ref-main-tools {
+  position: absolute;
+  bottom: 14px; right: 14px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+.ref-tool-btn {
+  width: 36px; height: 36px;
+  background: rgba(14, 12, 10, 0.65);
+  border: 1px solid rgba(240, 232, 219, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 8px;
+  color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.ref-tool-btn:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+/* Right: form column */
+.form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Small template card */
+.ref-template {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.ref-template-img {
+  width: 110px; height: 110px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.ref-template-img:hover { border-color: var(--border-hover); }
+.ref-template-img img { width: 100%; height: 100%; object-fit: cover; }
+.ref-template-img::after {
+  content: '参考模板';
+  position: absolute;
+  inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font: 600 10px/1 var(--font-sans);
+  color: var(--text);
+  background: linear-gradient(0deg, rgba(14,12,10,0.7) 0%, transparent 50%);
+  letter-spacing: 0.15em;
+  padding-bottom: 12px;
+  align-items: flex-end;
+  justify-content: center;
+}
+.ref-template-info {
+  flex: 1;
+  min-width: 0;
+}
+.ref-template-info h3 {
+  font: 600 13px/1.4 var(--font-sans);
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.ref-template-info p {
+  font: 400 12px/1.5 var(--font-sans);
+  color: var(--text-tertiary);
+}
+.ref-template-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: 500 12px var(--font-sans);
+  color: var(--accent);
+  margin-top: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.ref-template-change:hover { border-color: var(--accent); }
+
+/* Form fields */
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label {
+  font: 600 11px/1 var(--font-sans);
+  color: var(--text-tertiary);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.field label .cn {
+  font-size: 13px;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-weight: 500;
+  margin-left: 6px;
+}
+.field input, .field textarea {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: 400 13px/1.4 var(--font-sans);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  font-family: inherit;
+}
+.field input:focus, .field textarea:focus { border-color: var(--accent); }
+.field input::placeholder, .field textarea::placeholder { color: var(--text-tertiary); }
+.field textarea { resize: vertical; min-height: 60px; line-height: 1.6; }
+
+/* Generate button */
+.btn-generate {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--accent);
+  color: var(--bg);
+  font: 600 14px/1 var(--font-sans);
+  letter-spacing: 0.06em;
+  padding: 14px 28px;
+  border-radius: 100px;
+  align-self: flex-end;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 0 1px var(--accent-soft), 0 8px 24px rgba(194, 160, 122, 0.18);
+}
+.btn-generate::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 100px;
+  background: radial-gradient(circle, rgba(194, 160, 122, 0.3), transparent 70%);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s;
+}
+.btn-generate:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 0 0 1px var(--accent-soft), 0 12px 32px rgba(194, 160, 122, 0.32); }
+.btn-generate:hover::before { opacity: 1; }
+.btn-generate:active { transform: translateY(0); }
+.btn-generate:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+/* ---------- PROMPT INPUT ---------- */
+.prompt-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 40px;
+  transition: border-color 0.2s;
+}
+.prompt-block:focus-within { border-color: var(--accent); }
+.prompt-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.prompt-label {
+  font: 600 11px/1 var(--font-sans);
+  color: var(--text-secondary);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.prompt-label::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+.prompt-counter {
+  font: 400 11px var(--font-mono);
+  color: var(--text-tertiary);
+}
+.prompt-textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  font: 400 14px/1.7 var(--font-sans);
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+.prompt-textarea::placeholder { color: var(--text-tertiary); }
+.prompt-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.prompt-tag {
+  font: 500 11px/1 var(--font-sans);
+  color: var(--text-secondary);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
+}
+.prompt-tag:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ---------- RESULTS ---------- */
+.results-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.results-head h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text);
+  letter-spacing: -0.015em;
+}
+.results-head h2 em { color: var(--accent); }
+.results-toolbar { display: flex; gap: 8px; }
+.results-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font: 500 12px var(--font-sans);
+  color: var(--text-secondary);
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+}
+.results-btn:hover { color: var(--text); border-color: var(--border-hover); }
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding-bottom: 80px;
+}
+.result {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+.result:hover { border-color: var(--accent); transform: translateY(-3px); }
+.result:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.result img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.result:hover img { transform: scale(1.04); }
+.result-num {
+  position: absolute;
+  top: 12px; left: 12px;
+  font: 600 11px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  color: var(--text);
+  background: rgba(14, 12, 10, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 5px 8px;
+  border-radius: 4px;
+  z-index: 2;
+}
+.result-actions {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(14,12,10,0.85) 0%, transparent 50%);
+  opacity: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+  gap: 8px;
+  transition: opacity 0.25s;
+  z-index: 2;
+}
+.result:hover .result-actions { opacity: 1; }
+.result-action {
+  display: inline-flex; align-items: center; gap: 5px;
+  font: 600 11px var(--font-sans);
+  color: var(--text);
+  padding: 7px 12px;
+  background: rgba(14, 12, 10, 0.7);
+  border: 1px solid rgba(240, 232, 219, 0.2);
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+.result-action:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.result-action.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.result-action.primary:hover { background: var(--accent-hover); }
+
+/* ---------- ANIMATIONS ---------- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.result:nth-child(1) { animation-delay: 0.05s; }
+.result:nth-child(2) { animation-delay: 0.10s; }
+.result:nth-child(3) { animation-delay: 0.15s; }
+.result:nth-child(4) { animation-delay: 0.20s; }
+.result:nth-child(5) { animation-delay: 0.25s; }
+.result:nth-child(6) { animation-delay: 0.30s; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1023px) {
+  .container { padding: 0 24px; }
+  .workbench { grid-template-columns: 1fr; }
+  .ref-main { aspect-ratio: 4 / 3; }
+}
+@media (max-width: 767px) {
+  .nav { padding: 12px 16px; }
+  .container { padding: 0 16px; }
+  .page-head h1 { font-size: 28px; }
+  .page-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .ref-template { flex-direction: column; }
+  .ref-template-img { width: 100%; height: auto; aspect-ratio: 1 / 1; }
+  .form-fields { padding: 16px; }
+  .btn-generate { width: 100%; align-self: stretch; }
+  .results-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .results-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .result:hover, .btn-generate:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<header class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-back" aria-label="返回画廊">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      返回画廊
+    </a>
+    <span class="nav-divider"></span>
+    <h1 class="nav-title">主图<em>编辑</em></h1>
+  </div>
+  <div class="nav-right">
+    <button class="nav-icon-btn" aria-label="历史记录" title="历史记录">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+    </button>
+    <button class="nav-icon-btn" aria-label="保存草稿" title="保存草稿">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    </button>
+    <div class="nav-avatar" title="运营账号">YO</div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ===== PAGE HEAD ===== -->
+  <section class="page-head">
+    <div>
+      <div class="page-eyebrow">PRODUCT EDITOR · 主图工作台</div>
+      <h1>极简布艺三人沙发 · <em>主图</em></h1>
+    </div>
+    <div class="page-meta">
+      <span>SKU <span class="num">SOFA-024</span></span>
+      <span>类目 <span class="num">客厅家具</span></span>
+      <span>状态 <span class="num">草稿</span></span>
+    </div>
+  </section>
+
+  <!-- ===== WORKBENCH ===== -->
+  <section class="workbench">
+
+    <!-- Left: reference main image -->
+    <div class="ref-main">
+      <span class="ref-main-label">参考主图</span>
+      <img src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=900&q=80" alt="参考主图">
+      <div class="ref-main-tools">
+        <button class="ref-tool-btn" aria-label="替换图片" title="替换图片">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </button>
+        <button class="ref-tool-btn" aria-label="放大查看" title="放大查看">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: template + form + generate -->
+    <div class="form-col">
+
+      <!-- Small reference template -->
+      <div class="ref-template">
+        <div class="ref-template-img" title="点击更换参考模板">
+          <img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=300&q=80" alt="参考模板">
+        </div>
+        <div class="ref-template-info">
+          <h3>北欧极简风</h3>
+          <p>明亮、留白、生活化场景</p>
+          <button class="ref-template-change">
+            更换模板
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Form fields -->
+      <div class="form-fields">
+        <div class="field">
+          <label>Headline<span class="cn">主标题</span></label>
+          <input type="text" id="titleInput" placeholder="例：原木质感 · 北欧风三人沙发" value="">
+        </div>
+        <div class="field">
+          <label>Subtitle<span class="cn">副标题</span></label>
+          <input type="text" id="subtitleInput" placeholder="例：高密度乳胶 · 久坐不塌" value="">
+        </div>
+        <div class="field">
+          <label>Selling Points<span class="cn">卖点</span></label>
+          <input type="text" id="pointsInput" placeholder="例：环保布料 / 拆洗方便 / 5 年保修" value="">
+        </div>
+        <div class="field">
+          <label>Other<span class="cn">其它</span></label>
+          <textarea placeholder="补充说明：限时折扣 / 满减信息 / 特殊角标等..."></textarea>
+        </div>
+      </div>
+
+      <!-- Generate button -->
+      <button class="btn-generate" id="generateBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+        重新生成
+      </button>
+
+    </div>
+  </section>
+
+  <!-- ===== PROMPT INPUT ===== -->
+  <section class="prompt-block">
+    <div class="prompt-head">
+      <span class="prompt-label">Prompt · 提示词输入</span>
+      <span class="prompt-counter"><span id="promptCount">0</span> / 500</span>
+    </div>
+    <textarea id="promptInput" class="prompt-textarea" maxlength="500" placeholder="描述你想要的画面：风格、构图、光线、氛围…&#10;例：极简北欧风格客厅，自然光从左侧射入，木地板，米白色墙面，沙发居中，左下角点缀绿植，画面留白干净。"></textarea>
+    <div class="prompt-tags">
+      <button class="prompt-tag" onclick="appendPrompt('自然光')">+ 自然光</button>
+      <button class="prompt-tag" onclick="appendPrompt('木质地板')">+ 木质地板</button>
+      <button class="prompt-tag" onclick="appendPrompt('米白色背景')">+ 米白色背景</button>
+      <button class="prompt-tag" onclick="appendPrompt('点缀绿植')">+ 点缀绿植</button>
+      <button class="prompt-tag" onclick="appendPrompt('画面干净留白')">+ 画面干净留白</button>
+      <button class="prompt-tag" onclick="appendPrompt('45° 俯视角')">+ 45° 俯视角</button>
+    </div>
+  </section>
+
+  <!-- ===== RESULTS ===== -->
+  <section class="results-head">
+    <div>
+      <div class="page-eyebrow">RESULTS · 生成结果</div>
+      <h2>本次<em>生成</em></h2>
+    </div>
+    <div class="results-toolbar">
+      <button class="results-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        全部下载
+      </button>
+      <button class="results-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+        切换布局
+      </button>
+    </div>
+  </section>
+
+  <section class="results-grid">
+    <article class="result" tabindex="0">
+      <span class="result-num">01</span>
+      <img loading="lazy" src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=700&q=80" alt="生成结果 01">
+      <div class="result-actions">
+        <button class="result-action">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          采用
+        </button>
+        <button class="result-action primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载
+        </button>
+      </div>
+    </article>
+
+    <article class="result" tabindex="0">
+      <span class="result-num">02</span>
+      <img loading="lazy" src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=700&q=80" alt="生成结果 02">
+      <div class="result-actions">
+        <button class="result-action">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          采用
+        </button>
+        <button class="result-action primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载
+        </button>
+      </div>
+    </article>
+
+    <article class="result" tabindex="0">
+      <span class="result-num">03</span>
+      <img loading="lazy" src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=700&q=80" alt="生成结果 03">
+      <div class="result-actions">
+        <button class="result-action">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          采用
+        </button>
+        <button class="result-action primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载
+        </button>
+      </div>
+    </article>
+
+    <article class="result" tabindex="0">
+      <span class="result-num">04</span>
+      <img loading="lazy" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=700&q=80" alt="生成结果 04">
+      <div class="result-actions">
+        <button class="result-action">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          采用
+        </button>
+        <button class="result-action primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载
+        </button>
+      </div>
+    </article>
+
+    <article class="result" tabindex="0">
+      <span class="result-num">05</span>
+      <img loading="lazy" src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=700&q=80" alt="生成结果 05">
+      <div class="result-actions">
+        <button class="result-action">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          采用
+        </button>
+        <button class="result-action primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载
+        </button>
+      </div>
+    </article>
+
+    <article class="result" tabindex="0">
+      <span class="result-num">06</span>
+      <img loading="lazy" src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=700&q=80" alt="生成结果 06">
+      <div class="result-actions">
+        <button class="result-action">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          采用
+        </button>
+        <button class="result-action primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载
+        </button>
+      </div>
+    </article>
+  </section>
+
+</main>
+
+<script>
+  /* Prompt counter */
+  const promptInput = document.getElementById('promptInput');
+  const promptCount = document.getElementById('promptCount');
+  promptInput.addEventListener('input', () => {
+    promptCount.textContent = promptInput.value.length;
+  });
+
+  /* Click prompt tag → append */
+  function appendPrompt(text) {
+    const current = promptInput.value.trim();
+    promptInput.value = current ? `${current}，${text}` : text;
+    promptCount.textContent = promptInput.value.length;
+    promptInput.focus();
+  }
+
+  /* Generate button — real API call */
+  const generateBtn = document.getElementById('generateBtn');
+  generateBtn.addEventListener('click', async () => {
+    const original = generateBtn.innerHTML;
+    generateBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-9-9"/></svg> 生成中...';
+    generateBtn.disabled = true;
+
+    const form = new FormData();
+    const refImg = document.querySelector('.ref-canvas img');
+    if (refImg) {
+      try {
+        const resp = await fetch(refImg.src);
+        const blob = await resp.blob();
+        form.append('image', blob, 'reference.jpg');
+      } catch (e) {
+        form.append('image_url', refImg.src);
+      }
+    }
+    form.append('title', document.getElementById('titleInput')?.value || '');
+    form.append('subtitle', document.getElementById('subtitleInput')?.value || '');
+    form.append('selling_points', document.getElementById('pointsInput')?.value || '');
+    form.append('prompt_extra', document.getElementById('promptInput')?.value || '');
+
+    try {
+      const res = await fetch('/api/generate', { method: 'POST', body: form });
+      if (!res.ok) { const err = await res.json(); throw new Error(err.detail || '生成失败'); }
+      const data = await res.json();
+      const results = document.querySelectorAll('.result img');
+      data.images.forEach((img, i) => {
+        if (results[i]) { results[i].src = img.url; results[i].parentElement.classList.add('loaded'); }
+      });
+      document.querySelector('.results-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) {
+      alert('生成失败: ' + e.message);
+    }
+
+    generateBtn.innerHTML = original;
+    generateBtn.disabled = false;
+  });
+
+  /* Add spin keyframe */
+  const style = document.createElement('style');
+  style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+  document.head.appendChild(style);
+</script>
+
+</body>
+</html>
