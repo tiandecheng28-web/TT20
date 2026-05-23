@@ -1,6 +1,7 @@
 {
-  "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/editor", "destination": "/editor.html" }
-  ]
+  "functions": {
+    "api/generate.py": {
+      "includeFiles": "*.html"
+    }
+  }
 }
