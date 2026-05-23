@@ -5,9 +5,11 @@ POST /api/generate  接收产品图 + 文案参数 → 调用 Doubao 生图 → 
 import os
 import base64
 import httpx
+from pathlib import Path
 from datetime import datetime
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Optional
 
@@ -17,6 +19,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 ARK_API_KEY = os.getenv("ARK_API_KEY")
 API_URL = "https://ark.cn-beijing.volces.com/api/v3/images/generations"
 MODEL = "doubao-seedream-5-0-lite-260128"
+ROOT = Path(__file__).parent.parent
 
 
 class GeneratedImage(BaseModel):
@@ -54,6 +57,16 @@ def _extract_url(result: dict) -> str:
     if isinstance(data, list) and data:
         return data[0].get("url", "")
     raise ValueError(f"No image URL in response")
+
+
+@app.get("/")
+async def index():
+    return FileResponse(ROOT / "index.html")
+
+
+@app.get("/editor")
+async def editor():
+    return FileResponse(ROOT / "editor.html")
 
 
 @app.post("/api/generate", response_model=GenerateResponse)
@@ -101,7 +114,7 @@ async def generate(
         f"{text_context}. "
         f"{style_prompt}. "
         f"{prompt_extra}. "
-        f"High resolution, commercial photography, clean composition."
+        f"High resolution, commercial composition."
     )
 
     api_headers = {
