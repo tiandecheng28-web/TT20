@@ -800,14 +800,36 @@ a { color: inherit; text-decoration: none; }
     form.append('prompt_extra', document.getElementById('promptInput')?.value || '');
 
     try {
-      const res = await fetch('/api/generate', { method: 'POST', body: form });
-      if (!res.ok) { const err = await res.json(); throw new Error(err.detail || '生成失败'); }
-      const data = await res.json();
+      // Render 异步 API
+      const API_BASE = 'https://omni-api.onrender.com';
+      
+      const res = await fetch(API_BASE + '/api/generate', { method: 'POST', body: form });
+      if (!res.ok) { const err = await res.json(); throw new Error(err.detail || '提交失败'); }
+      const { task_id } = await res.json();
+      
+      // 轮询等待生图完成
+      const btnText = generateBtn.innerHTML;
       const results = document.querySelectorAll('.result img');
-      data.images.forEach((img, i) => {
-        if (results[i]) { results[i].src = img.url; results[i].parentElement.classList.add('loaded'); }
-      });
-      document.querySelector('.results-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const poll = setInterval(async () => {
+        try {
+          const s = await fetch(API_BASE + '/api/status/' + task_id);
+          const status = await s.json();
+          if (status.status === 'done') {
+            clearInterval(poll);
+            status.images.forEach((img, i) => {
+              if (results[i]) { results[i].src = img.url; results[i].parentElement.classList.add('loaded'); }
+            });
+            document.querySelector('.results-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            generateBtn.innerHTML = btnText;
+            generateBtn.disabled = false;
+          } else if (status.status === 'error') {
+            clearInterval(poll);
+            throw new Error(status.error || '生图失败');
+          } else {
+            generateBtn.innerHTML = '生成中... ' + (status.status === 'pending' ? '⏳' : '');
+          }
+        } catch(e) { clearInterval(poll); alert('失败: ' + e.message); generateBtn.innerHTML = btnText; generateBtn.disabled = false; }
+      }, 2000);
     } catch (e) {
       let msg = '未知错误';
       if (e instanceof Error) msg = e.message;
