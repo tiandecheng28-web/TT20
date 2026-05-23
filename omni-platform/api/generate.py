@@ -161,4 +161,14 @@ async def generate(
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "model": MODEL, "key_configured": bool(ARK_API_KEY)}
+    key_ok = bool(ARK_API_KEY)
+    key_preview = ""
+    if ARK_API_KEY:
+        key_preview = ARK_API_KEY[:8] + "..." + ARK_API_KEY[-4:]
+    return {
+        "status": "ok" if key_ok else "no_key",
+        "model": MODEL,
+        "key_configured": key_ok,
+        "key_preview": key_preview,
+        "api_url": API_URL,
+    }
