@@ -809,7 +809,12 @@ a { color: inherit; text-decoration: none; }
       });
       document.querySelector('.results-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } catch (e) {
-      alert('生成失败: ' + e.message);
+      let msg = '未知错误';
+      if (e instanceof Error) msg = e.message;
+      else if (typeof e === 'string') msg = e;
+      else try { msg = JSON.stringify(e); } catch(_) { msg = String(e); }
+      alert('生成失败: ' + msg);
+      console.error('Generate error:', e);
     }
 
     generateBtn.innerHTML = original;
