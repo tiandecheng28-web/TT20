@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/generate.py": {
-      "includeFiles": "*.html"
-    }
-  }
-}
